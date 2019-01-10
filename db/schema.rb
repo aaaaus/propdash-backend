@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_10_173948) do
+ActiveRecord::Schema.define(version: 2019_01_10_192807) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "amenities", force: :cascade do |t|
+    t.string "name"
+    t.integer "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "leases", force: :cascade do |t|
     t.integer "unit_id"
@@ -27,9 +34,40 @@ ActiveRecord::Schema.define(version: 2019_01_10_173948) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "prop_amenities", force: :cascade do |t|
+    t.integer "property_id"
+    t.integer "amenity_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "properties", force: :cascade do |t|
     t.string "name"
     t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "res_leases", force: :cascade do |t|
+    t.integer "resident_id"
+    t.integer "lease_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "residents", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "ssn"
+    t.string "date_of_birth"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "unit_amenities", force: :cascade do |t|
+    t.integer "unit_id"
+    t.integer "amenity_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
