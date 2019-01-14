@@ -7,6 +7,10 @@ Rails.application.routes.draw do
       resources :amenities, only: [:index, :show]
       resources :leases, only: [:index, :show]
       resources :residents, only: [:index, :show]
+
+      resources :users, only: [:create]
+      post '/login', to: 'auth#create'
+      post '/profile', to: 'users#profile'
     end
   end
 
