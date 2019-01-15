@@ -6,10 +6,10 @@ class Api::V1::AuthController < ApplicationController
     #User#authenticate comes from BCrypt
     if @user && @user.authenticate(user_login_params[:password])
       # encode token comes from ApplicationController
-      token = encode_token({ user_id: @user.id })
+      token = encode_token({ user_id: @user.id }) #this is our "handstamp"
       render json: { user: UserSerializer.new(@user), jwt: token }, status: :accepted
     else
-      render json: { message: 'Invalid username or password' }, status: :unauthorized
+      render json: { message: 'Invalid username or password' }, status: :unauthorized #this error message gets passed all the way to the UI
     end
   end
 
@@ -19,5 +19,5 @@ class Api::V1::AuthController < ApplicationController
     # params { user: {username: 'Chandler Bing', password: 'hi' } }
     params.require(:user).permit(:username, :password)
   end
-  
+
 end
