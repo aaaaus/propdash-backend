@@ -11,6 +11,8 @@ Unit.destroy_all
 Lease.destroy_all
 Resident.destroy_all
 ResLease.destroy_all
+
+Amenity.destroy_all
 PropAmenity.destroy_all
 UnitAmenity.destroy_all
 
@@ -41,9 +43,9 @@ i = 0
 
 lower_floors.each do |floor|
 
-  Unit.create({property_id: properties.first.id, number: floor.to_s + 'A', layout_type: '1_bed', floor: floor, square_footage: 625, line: 'A', floorplan: 'url', status: 'vacant', market_rent: 3500 + (10 * i)})
+  Unit.create({property_id: properties.first.id, number: floor.to_s + 'A', layout_type: '1_bed', floor: floor, square_footage: 625, line: 'A', floorplan: 'url', status: 'occupied', market_rent: 3500 + (10 * i)})
 
-  Unit.create({property_id: properties.first.id, number: floor.to_s + 'B', layout_type: '1_bed', floor: floor, square_footage: 650, line: 'B', floorplan: 'url', status: 'vacant', market_rent: 3600 + (10 * i)})
+  Unit.create({property_id: properties.first.id, number: floor.to_s + 'B', layout_type: '1_bed', floor: floor, square_footage: 650, line: 'B', floorplan: 'url', status: 'notice', market_rent: 3600 + (10 * i)})
 
   Unit.create({property_id: properties.first.id, number: floor.to_s + 'C', layout_type: '1_bed', floor: floor, square_footage: 690, line: 'C', floorplan: 'url', status: 'vacant', market_rent: 3800 + (10 * i)})
 
@@ -99,12 +101,17 @@ end
 units = Unit.all
 
 l1 = Lease.create({ unit_id: units.first.id, start_date: 10, end_date: 20, rent: 3100, status: 'current', account_balance: 100, in_legal: false })
+l2 = Lease.create({ unit_id: units.second.id, start_date: 10, end_date: 20, rent: 3200, status: 'current', account_balance: 100, in_legal: false })
 
 #RESIDENTS
-r1 = Resident.create({ first_name: 'John', last_name: 'McClane', email:'jmcyippee@yahoo.com', ssn: '111-22-3333', date_of_birth: '12/25/1960'})
+r1 = Resident.create({ first_name: 'John', last_name: 'McClane', email:'jmcclane@yahoo.com', ssn: '111-22-3333', date_of_birth: '12/25/1960'})
+r2 = Resident.create({ first_name: 'Paul', last_name: 'McCartney', email:'', ssn: '', date_of_birth: ''})
+r3 = Resident.create({ first_name: 'John', last_name: 'Lennon', email:'', ssn: '', date_of_birth: ''})
 
 #JOINS
 rl1 = ResLease.create({resident_id: r1.id, lease_id: l1.id })
+rl2 = ResLease.create({resident_id: r2.id, lease_id: l2.id })
+rl3 = ResLease.create({resident_id: r3.id, lease_id: l2.id })
 
 pa1 = PropAmenity.create({property_id: properties.first.id, amenity_id: a1.id })
 ua1 = UnitAmenity.create({unit_id: units.first.id, amenity_id: a2.id })
