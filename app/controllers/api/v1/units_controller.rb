@@ -8,27 +8,24 @@ class Api::V1::UnitsController < ApplicationController
   end
 
   def show
-    # @unit = Unit.find(params[:id])
+    # @unit = Unit.find_by(id: params[:id])
     render json: @unit
   end
 
   def update
+    # @unit = Unit.find_by(id: params[:id])
     @unit.update(unit_params)
-    if @unit.save
-      render json: @unit, status: :accepted
-    else
-      render json: { errors: @unit.errors.full_messages }, status: :unprocessible_entity
-    end
+    render json: @unit, status: :ok
   end
 
   private
 
   def unit_params
-    params.permit(:title, :content)
+    params.permit(:status) #as of now, status is the only param being patched
   end
 
   def find_unit
-    @unit = Unit.find(params[:id])
+    @unit = Unit.find_by(id: params[:id])
   end
 
 end
