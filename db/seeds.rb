@@ -108,6 +108,10 @@ end
 #LEASES
 
 #preset lease terms
+
+start_0 = Time.parse("2018-01-01 Eastern Time (US & Canada)").utc
+end_0 = Time.parse("2018-12-31 Eastern Time (US & Canada)").utc
+
 start_1 = Time.parse("2018-02-01 Eastern Time (US & Canada)").utc
 end_1 = Time.parse("2019-01-31 Eastern Time (US & Canada)").utc
 
@@ -151,18 +155,23 @@ terms = [[start_1, end_1], [start_2, end_2], [start_3, end_3], [start_4, end_4],
 
 Unit.all.each do |unit|
   random_value = (rand * 100).to_i
-  if random_value < 91 #ensures about 10% of units are vacant
-    #unit.status = 'occupied'
+
+  lease_dates = terms.shuffle[0] #selects random set for term dates
+  start_date = lease_dates[0]
+  end_date = lease_dates[1]
+  rent = (random_value.even?) ? unit.market_rent + random_value : unit.market_rent - random_value
+  in_legal = (random_value === 1 ? true : false) # ensures 1% chance of unit being in legal
+  account_balance = (random_value > 90 ? rent : 0) # ensure 10% chance apartment has a balance equal to one month's rent
+
+  if random_value < 86 #ensures ~15% of units are vacant
     unit.update(status: 'occupied')
-    lease_dates = terms.shuffle[0] #selects random set for term dates
-    start_date = lease_dates[0]
-    end_date = lease_dates[1]
-    rent = (random_value.even?) ? unit.market_rent + random_value : unit.market_rent - random_value
-    in_legal = (random_value === 1 ? true : false) # ensures 1% chance of unit being in legal
-    account_balance = (random_value > 90 ? rent : 0) # ensure 10% chance apartment has a balance equal to one month's rent
 
     Lease.create({ unit_id: unit.id, start_date: start_date, end_date: end_date, rent: rent, status: 'current', account_balance: account_balance, in_legal: in_legal })
-  end #ensures 5% of units are vacant after seeding
+
+  else #create past leases for vacant units so that "days vacant" works
+    Lease.create({ unit_id: unit.id, start_date: start_0, end_date: end_0, rent: rent, status: 'past', account_balance: account_balance, in_legal: in_legal })
+
+  end
 end
 
 leases = Lease.all
@@ -170,7 +179,11 @@ leases = Lease.all
 #################################################
 #RESIDENTS
 
-resident_names = ['Jeff Hwang', 'Laura Kim', 'Mike Cheng', 'Evans Wang', 'Andrew Cohn', 'Jason Decker', 'Albert Chun', 'Alex Truong', 'Alex Frosell', 'Ali Reubenstone', 'Austin Luft', 'Cara Morelli', 'Chett Tiller', 'Eric Laitman', 'Frida Casas', 'Ian Hollander', 'Leslie Turis', 'Mike Wu', 'Minhee Park', 'Phong Nguyen', 'Saajid Khan', 'Sarah Pai', 'Sam Turac', 'Sydney Grant', 'Tirem Bareno-Sosna', 'Vera Protopopova', 'Yoan Ante', 'Yu Li', 'Michael Scott', 'Jim Halpert', 'Pam Beesley', 'Dwight Schrute', 'John Lennon', 'Paul McCartney', 'George Harrison', 'Ringo Starr', 'Barack Obama', 'Donald Trump', 'John McClane', 'Joey Tribbiani', 'Chandler Bing', 'Jennifer Lopez', 'Lady Gaga', 'Don Draper', 'Bruce Wayne', 'Clark Kent', 'Dave Chapelle', 'Bruce Willis', 'Tony Soprano', 'Jennifer Aniston', 'Jerry Seinfeld', 'George Costanza', 'Elaine Benes', 'Cosmo Kramer', 'Anthony Bourdain', 'Hugh Hefner', 'Chris Evans', 'Harry Potter', 'Hermione Granger', 'Peter XXXX', 'Nicolas Cage', 'Keanu Reaves', 'Alexander Raymond', 'Vladimir Putin', "Conan O'Brien", 'Conan TheBarbarian', 'Oprah Winfrey', 'Leslie Knope', 'Ron Swanson', 'Tom Haverford', 'Andy Dwyer', 'Tony Montana', 'Pablo Escobar', 'Eric Clapton', 'Grimace McDonald', 'Angelina Jolie', 'Misty Knight', 'Melania Trump', 'Michelle Obama', 'Dwayne Johnson', 'Elton John', 'Jean-Claude Van-Damme', 'Hannah Jeter', "Beyonce Knowles-Carter", 'Kendall Jenner', 'Eva Longoria', 'Eva Mendes', 'Salma Hayek', 'Panelope Cruz', 'Jon Snow', 'John Cena', 'Stone-Cold Steve-Austin', 'Kurt Angle', 'Jessica Alba', 'Justin Timberlake', 'Ozzy Osbourne', 'Cookie Monster', 'Big Bird', 'Spongebob Squarepants', 'Patrick Star', 'Luke Skywalker', 'Han Solo', 'Frodo Baggins', 'Tyrion Lannister', 'Roger Federer', 'Hugh Grant', 'Hugh Jackman', 'Lebron James', 'Kobe Bryant', 'Genghis Khan', 'Hannibal Lecter', 'Frank Castle', 'Wade Wilson', 'Jean-Luc Picard', ]
+departed_names = []
+
+resident_names = ['Jeff Hwang', 'Laura Kim', 'Mike Cheng', 'Evans Wang', 'Andrew Cohn', 'Jason Decker', 'Albert Chun', 'Alex Truong', 'Alex Frosell', 'Ali Reubenstone', 'Austin Luft', 'Cara Morelli', 'Chett Tiller', 'Eric Laitman', 'Frida Casas', 'Ian Hollander', 'Leslie Turis', 'Mike Wu', 'Minhee Park', 'Phong Nguyen', 'Saajid Khan', 'Sarah Pai', 'Sam Turac', 'Sydney Grant', 'Tirem Bareno-Sosna', 'Vera Protopopova', 'Yoan Ante', 'Yu Li', 'Michael Scott', 'Jim Halpert', 'Pam Beesley', 'Dwight Schrute', 'John Lennon', 'Paul McCartney', 'George Harrison', 'Ringo Starr', 'Barack Obama', 'Donald Trump', 'John McClane', 'Joey Tribbiani', 'Chandler Bing', 'Jennifer Lopez', 'Lady Gaga', 'Don Draper', 'Bruce Wayne', 'Clark Kent', 'Dave Chapelle', 'Bruce Willis', 'Tony Soprano', 'Jennifer Aniston', 'Jerry Seinfeld', 'George Costanza', 'Elaine Benes', 'Cosmo Kramer']
+
+resident_names_for_later = ['Anthony Bourdain', 'Hugh Hefner', 'Chris Evans', 'Harry Potter', 'Hermione Granger', 'Peter XXXX', 'Nicolas Cage', 'Keanu Reaves', 'Alexander Raymond', 'Vladimir Putin', "Conan O'Brien", 'Conan TheBarbarian', 'Oprah Winfrey', 'Leslie Knope', 'Ron Swanson', 'Tom Haverford', 'Andy Dwyer', 'Tony Montana', 'Pablo Escobar', 'Eric Clapton', 'Grimace McDonald', 'Angelina Jolie', 'Misty Knight', 'Melania Trump', 'Michelle Obama', 'Dwayne Johnson', 'Elton John', 'Jean-Claude Van-Damme', 'Hannah Jeter', "Beyonce Knowles-Carter", 'Kendall Jenner', 'Eva Longoria', 'Eva Mendes', 'Salma Hayek', 'Panelope Cruz', 'Jon Snow', 'John Cena', 'Stone-Cold Steve-Austin', 'Kurt Angle', 'Jessica Alba', 'Justin Timberlake', 'Ozzy Osbourne', 'Cookie Monster', 'Big Bird', 'Spongebob Squarepants', 'Patrick Star', 'Luke Skywalker', 'Han Solo', 'Frodo Baggins', 'Tyrion Lannister', 'Roger Federer', 'Hugh Grant', 'Hugh Jackman', 'Lebron James', 'Kobe Bryant', 'Genghis Khan', 'Hannibal Lecter', 'Frank Castle', 'Wade Wilson', 'Jean-Luc Picard']
 
 
 
