@@ -179,11 +179,9 @@ leases = Lease.all
 #################################################
 #RESIDENTS
 
-departed_names = []
+departed_names = ['Hugh Hefner', 'John Lennon', 'George Harrison']
 
-resident_names = ['Jeff Hwang', 'Laura Kim', 'Mike Cheng', 'Evans Wang', 'Andrew Cohn', 'Jason Decker', 'Albert Chun', 'Alex Truong', 'Alex Frosell', 'Ali Reubenstone', 'Austin Luft', 'Cara Morelli', 'Chett Tiller', 'Eric Laitman', 'Frida Casas', 'Ian Hollander', 'Leslie Turis', 'Mike Wu', 'Minhee Park', 'Phong Nguyen', 'Saajid Khan', 'Sarah Pai', 'Sam Turac', 'Sydney Grant', 'Tirem Bareno-Sosna', 'Vera Protopopova', 'Yoan Ante', 'Yu Li', 'Michael Scott', 'Jim Halpert', 'Pam Beesley', 'Dwight Schrute', 'John Lennon', 'Paul McCartney', 'George Harrison', 'Ringo Starr', 'Barack Obama', 'Donald Trump', 'John McClane', 'Joey Tribbiani', 'Chandler Bing', 'Jennifer Lopez', 'Lady Gaga', 'Don Draper', 'Bruce Wayne', 'Clark Kent', 'Dave Chapelle', 'Bruce Willis', 'Tony Soprano', 'Jennifer Aniston', 'Jerry Seinfeld', 'George Costanza', 'Elaine Benes', 'Cosmo Kramer']
-
-resident_names_for_later = ['Anthony Bourdain', 'Hugh Hefner', 'Chris Evans', 'Harry Potter', 'Hermione Granger', 'Peter XXXX', 'Nicolas Cage', 'Keanu Reaves', 'Alexander Raymond', 'Vladimir Putin', "Conan O'Brien", 'Conan TheBarbarian', 'Oprah Winfrey', 'Leslie Knope', 'Ron Swanson', 'Tom Haverford', 'Andy Dwyer', 'Tony Montana', 'Pablo Escobar', 'Eric Clapton', 'Grimace McDonald', 'Angelina Jolie', 'Misty Knight', 'Melania Trump', 'Michelle Obama', 'Dwayne Johnson', 'Elton John', 'Jean-Claude Van-Damme', 'Hannah Jeter', "Beyonce Knowles-Carter", 'Kendall Jenner', 'Eva Longoria', 'Eva Mendes', 'Salma Hayek', 'Panelope Cruz', 'Jon Snow', 'John Cena', 'Stone-Cold Steve-Austin', 'Kurt Angle', 'Jessica Alba', 'Justin Timberlake', 'Ozzy Osbourne', 'Cookie Monster', 'Big Bird', 'Spongebob Squarepants', 'Patrick Star', 'Luke Skywalker', 'Han Solo', 'Frodo Baggins', 'Tyrion Lannister', 'Roger Federer', 'Hugh Grant', 'Hugh Jackman', 'Lebron James', 'Kobe Bryant', 'Genghis Khan', 'Hannibal Lecter', 'Frank Castle', 'Wade Wilson', 'Jean-Luc Picard']
+resident_names = ['Jeff Hwang', 'Laura Kim', 'Mike Cheng', 'Evans Wang', 'Andrew Cohn', 'Jason Decker', 'Albert Chun', 'Alex Truong', 'Alex Frosell', 'Ali Reubenstone', 'Austin Luft', 'Cara Morelli', 'Chett Tiller', 'Eric Laitman', 'Frida Casas', 'Ian Hollander', 'Leslie Turis', 'Mike Wu', 'Minhee Park', 'Phong Nguyen', 'Saajid Khan', 'Sarah Pai', 'Sam Turac', 'Sydney Grant', 'Tirem Bareno-Sosna', 'Vera Protopopova', 'Yoan Ante', 'Yu Li', 'Michael Scott', 'Jim Halpert', 'Pam Beesley', 'Dwight Schrute', 'Paul McCartney', 'Ringo Starr', 'Barack Obama', 'Donald Trump', 'John McClane', 'Joey Tribbiani', 'Chandler Bing', 'Jennifer Lopez', 'Lady Gaga', 'Don Draper', 'Bruce Wayne', 'Clark Kent', 'Dave Chapelle', 'Bruce Willis', 'Tony Soprano', 'Jennifer Aniston', 'Jerry Seinfeld', 'George Costanza', 'Elaine Benes', 'Cosmo Kramer', 'Anthony Bourdain', 'Chris Evans', 'Harry Potter', 'Hermione Granger', 'Nicolas Cage', 'Keanu Reaves', 'Alexander Raymond', 'Vladimir Putin', "Conan O'Brien", 'Conan The-Barbarian', 'Oprah Winfrey', 'Leslie Knope', 'Ron Swanson', 'Tom Haverford', 'Andy Dwyer', 'Tony Montana', 'Pablo Escobar', 'Eric Clapton', 'Grimace McDonald', 'Angelina Jolie', 'Misty Knight', 'Melania Trump', 'Michelle Obama', 'Dwayne Johnson', 'Elton John', 'Jean-Claude Van-Damme', 'Hannah Jeter', "Beyonce Knowles-Carter", 'Kendall Jenner', 'Eva Longoria', 'Eva Mendes', 'Salma Hayek', 'Panelope Cruz', 'Jon Snow', 'John Cena', 'Stone-Cold Steve-Austin', 'Kurt Angle', 'Jessica Alba', 'Justin Timberlake', 'Ozzy Osbourne', 'Cookie Monster', 'Big Bird', 'Spongebob Squarepants', 'Patrick Star', 'Luke Skywalker', 'Han Solo', 'Frodo Baggins', 'Tyrion Lannister', 'Roger Federer', 'Hugh Grant', 'Hugh Jackman', 'Lebron James', 'Kobe Bryant', 'Genghis Khan', 'Hannibal Lecter', 'Frank Castle', 'Wade Wilson', 'Jean-Luc Picard', 'Danny Devito', 'Alicia Keys', 'Lenny Kravitz', 'George Clooney', 'Jennifer Lawrence', 'Jessica Alba', 'Will Smith', 'Tom Cruise', 'Leonardo DiCaprio', 'Kanye West', 'Kevin Hart', 'John Mulaney', 'Brad Pitt', 'Peter Parker', 'Philip Fry', 'Zapp Brannigan', 'Amy Wong', 'Dr. Zoidberg', 'Bender Rodriguez', 'Hermes Conrad', 'Michael Corleone', 'George Jefferson']
 
 
 
@@ -204,17 +202,20 @@ residents = Resident.all #can call shuffle
 #JOINS
 
 shuffle_leases = leases.shuffle
+more_leases = leases.shuffle
 
 residents.each do |resident|
 
-  lease = shuffle_leases.pop
+  if shuffle_leases.length > 0
+    lease = shuffle_leases.pop
 
-  ResLease.create({resident_id: resident.id, lease_id: lease.id })
+    ResLease.create({resident_id: resident.id, lease_id: lease.id })
+  else
+    lease = more_leases.pop
+
+    ResLease.create({resident_id: resident.id, lease_id: lease.id })
+  end
 end
 
-# rl1 = ResLease.create({resident_id: r1.id, lease_id: l1.id })
-# rl2 = ResLease.create({resident_id: r2.id, lease_id: l2.id })
-# rl3 = ResLease.create({resident_id: r3.id, lease_id: l2.id })
-#
 # pa1 = PropAmenity.create({property_id: properties.first.id, amenity_id: a1.id })
 # ua1 = UnitAmenity.create({unit_id: units.first.id, amenity_id: a2.id })
